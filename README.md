@@ -50,12 +50,6 @@ Ideal para desenvolvedores, estudantes e administradores de sistemas que valoriz
 
 ---
 
-## 🌐 Link do Repositório
-
-[Repositório no GitHub](https://github.com/seu-usuario/agenda-interativa)
-
----
-
 ## 📝 Como Usar
 
 1. Clone o repositório:

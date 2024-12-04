@@ -86,6 +86,28 @@ excluir_evento() {
     fi
 }
 
+# Função para exportar a agenda
+exportar_agenda() {
+    arquivo_exportacao=$(dialog --inputbox "Digite o nome do arquivo para exportar (ex: agenda_export.csv):" 10 50 3>&1 1>&2 2>&3 3>&-)
+    
+    if [ -n "$arquivo_exportacao" ]; then
+        # Verifica se há eventos para exportar
+        if [ ! -s "$AGENDA_FILE" ]; then
+            dialog --msgbox "Nenhum evento para exportar!" 6 40
+            return
+        fi
+
+        # Formata os eventos como CSV
+        echo "Data,Título,Descrição" > "$arquivo_exportacao"
+        awk -F'|' '{printf "%s,%s,%s\n", $1, $2, $3}' "$AGENDA_FILE" >> "$arquivo_exportacao"
+
+        dialog --msgbox "Agenda exportada para o arquivo: $arquivo_exportacao" 6 50
+    else
+        dialog --msgbox "Nenhum nome de arquivo foi informado!" 6 40
+    fi
+}
+
+
 # Função para exibir os detalhes de um evento
 exibir_detalhe_evento() {
     if [ ! -s "$AGENDA_FILE" ]; then
@@ -110,15 +132,15 @@ exibir_detalhe_evento() {
     fi
 }
 
-# Menu principal
 while true; do
-    opcao=$(dialog --menu "Menu de Agenda:" 15 50 7 \
+    opcao=$(dialog --menu "Menu de Agenda:" 15 50 8 \
         1 "Marcar evento" \
         2 "Listar todos os eventos" \
         3 "Eventos do dia" \
         4 "Excluir evento" \
         5 "Exibir detalhes do evento" \
-        6 "Sair" 3>&1 1>&2 2>&3 3>&-)
+        6 "Exportar agenda" \
+        7 "Sair" 3>&1 1>&2 2>&3 3>&-)
 
     case $opcao in
         1) marcar_evento ;;
@@ -126,7 +148,8 @@ while true; do
         3) eventos_do_dia ;;
         4) excluir_evento ;;
         5) exibir_detalhe_evento ;;
-        6) break ;;
+        6) exportar_agenda ;;
+        7) break ;;
         *) dialog --msgbox "Opção inválida!" 6 40 ;;
     esac
 done
